@@ -448,7 +448,7 @@ namespace IATK {
 
             float[] uniqueValues = data.Distinct().ToArray();
 
-            for (int i = 0; i < data.Length; i++)
+            for (int i = 0; i < data.Length && i < palette.Length; i++)
             {
                 int indexColor = Array.IndexOf(uniqueValues, data[i]);
                 colours[i] = palette[indexColor];

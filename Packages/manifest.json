@@ -1,6 +1,14 @@
 {
   "scopedRegistries": [
     {
+      "name": "oculus",
+      "url": "https://npm.developer.oculus.com/",
+      "scopes": [
+        "com.meta.xr.sdk",
+        "com.meta.xr.simulator"
+      ]
+    },
+    {
       "name": "npmjs",
       "url": "https://registry.npmjs.org/",
       "scopes": [
@@ -9,9 +17,13 @@
     }
   ],
   "dependencies": {
-    "com.meta.xr.simulator": "file:C:/Users/lukeda/Downloads/com.meta.xr.simulator-54.0.2-preview.tgz",
+    "com.meta.xr.sdk.interaction": "54.0.2-preview",
+    "com.meta.xr.sdk.interaction.ovr": "54.0.3-preview",
+    "com.meta.xr.sdk.interaction.ovr.samples": "54.0.3-preview",
+    "com.meta.xr.sdk.sharedassets": "54.0.1-preview",
+    "com.meta.xr.simulator": "54.0.1-preview",
     "com.unity.ai.navigation": "1.1.4",
-    "com.unity.collab-proxy": "2.0.5",
+    "com.unity.collab-proxy": "2.0.7",
     "com.unity.ide.rider": "3.0.24",
     "com.unity.ide.visualstudio": "2.0.18",
     "com.unity.ide.vscode": "1.2.5",
@@ -19,7 +31,7 @@
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.7.5",
     "com.unity.ugui": "1.0.0",
-    "com.unity.xr.openxr": "1.8.1",
+    "com.unity.xr.oculus": "4.0.0",
     "io.extendreality.tilia.camerarigs.trackedalias.unity": "2.0.3",
     "io.extendreality.tilia.camerarigs.xrpluginframework.unity": "2.0.3",
     "io.extendreality.tilia.input.unityinputsystem": "2.0.3",

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,8 +41,8 @@ namespace IATK
 
             SizeAttributeDropDown.value = DataAttributesNames.IndexOf(visualisation.sizeDimension);
 
-            if(visualisation.attributeFilters.Length>0)
-            FilterAttributeDropDown.value = DataAttributesNames.IndexOf(visualisation.attributeFilters[0].Attribute);
+            if(visualisation.attributeFilters.Any())
+                FilterAttributeDropDown.value = DataAttributesNames.IndexOf(visualisation.attributeFilters[0].Attribute);
         }
 
         // Update is called once per frame

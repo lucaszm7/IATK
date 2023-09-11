@@ -236,16 +236,16 @@ namespace IATK
         
         public virtual void updateViewProperties(AbstractVisualisation.PropertyType propertyType)
         {
-            if (theVisualizationObject == null) CreateVisualisation(visualisationType);
+            if (theVisualizationObject == null) 
+                CreateVisualisation(visualisationType);
+
             theVisualizationObject.UpdateVisualisation(propertyType);
 
-            if(OnUpdateViewAction!=null)
-            OnUpdateViewAction(propertyType);
+            if(OnUpdateViewAction != null)
+                OnUpdateViewAction(propertyType);
 
             if (key != null)
-            {
                 updateKey();
-            }
         }
 
         public void updateProperties()
