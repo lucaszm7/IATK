@@ -213,7 +213,7 @@ namespace IATK
             key.transform.localPosition = new Vector3(0.15f, 1.165f, 0f);
         }
 
-        public void updateView(AbstractVisualisation.PropertyType propertyType)
+        public void updateView()
         {
             theVisualizationObject.CreateVisualisation();// UpdateVisualisation(propertyType);
         }
