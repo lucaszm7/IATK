@@ -50,6 +50,9 @@ public class DeskFilters : MonoBehaviour
                 var deskPos = new Vector3(-0.168799996f, 0.75029999f, 0.300900012f) + (step * (j + 1));
                 instantiateButtonObject.transform.position = deskDimension ? deskPos : graphPos;
                 instantiateButtonObject.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                var cubeText = instantiateButtonObject.GetComponentInChildren<TextMeshPro>();
+                if (cubeText != null)
+                    cubeText.text = dimentions[j];
 
                 var cubeIndexRenderer = instantiateButtonObject.GetComponent<MeshRenderer>();
                 cubeIndexRenderer.material.SetColor("_Color", j == indexSelected ? selectedColor : unselectedColor);
