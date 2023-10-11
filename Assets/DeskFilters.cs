@@ -4,6 +4,7 @@ using UnityEngine;
 using IATK;
 using System.Linq;
 using TMPro;
+using System;
 
 public class DeskFilters : MonoBehaviour
 {
@@ -18,9 +19,13 @@ public class DeskFilters : MonoBehaviour
     [SerializeField]
     public GameObject buttonObject;
 
-    private int xAxis;
-    private int yAxis;
-    private int zAxis;
+    private int xDimension;
+    private int yDimension;
+    private int zDimension;
+    private int ColorDimension;
+
+    private Color selectedColor = Color.blue;
+    private Color unselectedColor = Color.black;
 
     List<GameObject> dimentionSelectables;
 
@@ -30,93 +35,88 @@ public class DeskFilters : MonoBehaviour
         dimentions = GetAttributesList();
         dimentionSelectables = new List<GameObject>();
 
-        Vector3 step = Vector3.zero;
-        AbstractVisualisation.PropertyType axis = AbstractVisualisation.PropertyType.X;
+        ColorDimension = 3;
+        xDimension = 4;
+        yDimension = 5;
+        zDimension = 6;
 
-        for (var i = 0; i < 3; ++i)
+        Func<AbstractVisualisation.PropertyType, int, Vector3, bool, bool> createDimension = (dimension, indexSelected, step, deskDimension) =>
         {
-            if (i == 0)
-            {
-                axis = AbstractVisualisation.PropertyType.X;
-                step = new Vector3(0.05f, 0, 0);
-            }
-
-            else if(i == 1)
-            {
-                axis = AbstractVisualisation.PropertyType.Y;
-                step = new Vector3(0.0f, 0.05f, 0.0f);
-            }
-
-            else if (i == 2)
-            {
-                axis = AbstractVisualisation.PropertyType.Z;
-                step = new Vector3(0.0f, 0.0f, 0.05f);
-            }
-
             for (var j = 0; j < dimentions.Count; ++j)
             {
                 var instantiateButtonObject = Instantiate(this.buttonObject, gameObject.transform);
 
-                instantiateButtonObject.transform.position = gameObject.transform.position + new Vector3(-0.02f, 0.02f, -0.02f) + (step * (j + 1));
-
-                //var cubeRenderer = instantiateButtonObject.GetComponent<MeshRenderer>();
-                //Color customColor = new Color(0.1f, 0.2f, 0.3f, 1.0f) * j;
-                //cubeRenderer.material.SetColor("_Color", customColor);
-
+                var graphPos = gameObject.transform.position + new Vector3(-0.02f, 0.02f, -0.02f) + (step * (j + 1));
+                var deskPos = new Vector3(-0.168799996f, 0.75029999f, 0.300900012f) + (step * (j + 1));
+                instantiateButtonObject.transform.position = deskDimension ? deskPos : graphPos;
                 instantiateButtonObject.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+
+                var cubeIndexRenderer = instantiateButtonObject.GetComponent<MeshRenderer>();
+                cubeIndexRenderer.material.SetColor("_Color", j == indexSelected ? selectedColor : unselectedColor);
 
                 var buttonComponent = instantiateButtonObject.GetComponent<CubeButton>();
                 buttonComponent.dimensionName = dimentions[j];
-                buttonComponent.axis = axis;
-
-                var buttonText = instantiateButtonObject.GetComponentInChildren<TextMeshPro>();
+                buttonComponent.axis = dimension;
 
                 dimentionSelectables.Add(instantiateButtonObject);
             }
-        }
+            return true;
+        };
 
-        xAxis = 4;
-        yAxis = 5;
-        zAxis = 6;
+        createDimension(AbstractVisualisation.PropertyType.X, xDimension, new Vector3(0.05f, 0, 0), false);
+        createDimension(AbstractVisualisation.PropertyType.Y, yDimension, new Vector3(0, 0.05f, 0), false);
+        createDimension(AbstractVisualisation.PropertyType.Z, zDimension, new Vector3(0, 0, 0.05f), false);
+        createDimension(AbstractVisualisation.PropertyType.Colour, ColorDimension, new Vector3(0.05f, 0, 0), true);
 
         visualisation.updateView();
     }
 
     public void UpdateAxis(AbstractVisualisation.PropertyType axis, string name)
     {
-        var cubeIndex = dimentionSelectables.FindIndex(i => i.GetComponent<CubeButton>().dimensionName == name && i.GetComponent<CubeButton>().axis == axis);
-        var cubeIndexRenderer = dimentionSelectables[cubeIndex].GetComponent<MeshRenderer>();
-        cubeIndexRenderer.material.SetColor("_Color", new Color( 0.0f, 0.0f, 1.0f));
-
-        int axisLatestCubeSelected;
+        int unselectedDimensionNameIndex = 0;
         if (axis == AbstractVisualisation.PropertyType.X)
-            axisLatestCubeSelected = xAxis;
+            unselectedDimensionNameIndex = xDimension;
         else if (axis == AbstractVisualisation.PropertyType.Y)
-            axisLatestCubeSelected = yAxis;
-        else
-            axisLatestCubeSelected = zAxis;
+            unselectedDimensionNameIndex = yDimension;
+        else if (axis == AbstractVisualisation.PropertyType.Z)
+            unselectedDimensionNameIndex = zDimension;
+        else if (axis == AbstractVisualisation.PropertyType.Colour)
+            unselectedDimensionNameIndex = ColorDimension;
 
-        var lastestCubeIndexRenderer = dimentionSelectables[axisLatestCubeSelected].GetComponent<MeshRenderer>();
-        lastestCubeIndexRenderer.material.SetColor("_Color", new Color(0.1f, 0.1f, 0.1f));
+        var selectedCubeIndex = dimentionSelectables.FindIndex(i => i.GetComponent<CubeButton>().dimensionName == name && i.GetComponent<CubeButton>().axis == axis);
+        var unselectedCubeIndex = dimentionSelectables.FindIndex(i => i.GetComponent<CubeButton>().dimensionName == dimentions[unselectedDimensionNameIndex] && i.GetComponent<CubeButton>().axis == axis);
 
-        var index = dimentions.FindIndex(x => x.Contains(name));
+        if (unselectedCubeIndex == selectedCubeIndex)
+            return;
+
+        var cubeIndexRenderer = dimentionSelectables[selectedCubeIndex].GetComponent<MeshRenderer>();
+        cubeIndexRenderer.material.SetColor("_Color", selectedColor);
+
+        var lastestCubeIndexRenderer = dimentionSelectables[unselectedCubeIndex].GetComponent<MeshRenderer>();
+        lastestCubeIndexRenderer.material.SetColor("_Color", unselectedColor);
+
+        var selectedDimensionNameIndex = dimentions.FindIndex(x => x.Contains(name));
 
         if (visualisation != null)
         {
             if (axis == AbstractVisualisation.PropertyType.X)
-                xAxis = index;
+                xDimension = selectedDimensionNameIndex;
             if (axis == AbstractVisualisation.PropertyType.Y)
-                yAxis = index;
+                yDimension = selectedDimensionNameIndex;
             if (axis == AbstractVisualisation.PropertyType.Z)
-                zAxis = index;
+                zDimension = selectedDimensionNameIndex;
+            if (axis == AbstractVisualisation.PropertyType.Colour)
+                ColorDimension = selectedDimensionNameIndex;
 
-            visualisation.xDimension = dimentions[xAxis];
-            visualisation.yDimension = dimentions[yAxis];
-            visualisation.zDimension = dimentions[zAxis];
+            visualisation.xDimension = dimentions[xDimension];
+            visualisation.yDimension = dimentions[yDimension];
+            visualisation.zDimension = dimentions[zDimension];
+            visualisation.colourDimension = dimentions[ColorDimension];
 
             visualisation.updateViewProperties(AbstractVisualisation.PropertyType.X);
             visualisation.updateViewProperties(AbstractVisualisation.PropertyType.Y);
             visualisation.updateViewProperties(AbstractVisualisation.PropertyType.Z);
+            visualisation.updateViewProperties(AbstractVisualisation.PropertyType.Colour);
         }
     }
 
