@@ -82,13 +82,14 @@ public class DeskFilters : MonoBehaviour
 
         var step = new Vector3(0.07f, 0, 0);
         createDimension(dimentions,     AbstractVisualisation.PropertyType.OriginDimension, xDimension, step, new Vector3(-0.60f, 0.815f, 0.40f));
-        createDimension(dimensionsUsed, AbstractVisualisation.PropertyType.DimensionChange, 0, step, new Vector3(-0.60f, 0.815f, 0.30f));
+        createDimension(dimensionsUsed, AbstractVisualisation.PropertyType.DimensionChange, 0, step, new Vector3(-0.3f, 0.815f, 0.30f));
 
         visualisation.updateView();
     }
 
     public void UpdateAxis(AbstractVisualisation.PropertyType axis, string name)
     {
+        string dimensionName = name;
         if(axis == AbstractVisualisation.PropertyType.DimensionChange)
         {
             dimensionSelected = ToDimension(name);
@@ -103,12 +104,14 @@ public class DeskFilters : MonoBehaviour
             if (dimensionSelected == AbstractVisualisation.PropertyType.Size)
                 name = dimentions[SizeDimension];
         }
+        else
+        {
+            dimensionName = ToString(dimensionSelected);
+        }
 
         TurnAllCubesUnselectedColor();
-        
-        var selectedCubeIndex = dimentionSelectables.FindIndex(i => i.GetComponent<CubeButton>().dimensionName == name);
-        var cubeIndexRenderer = dimentionSelectables[selectedCubeIndex].GetComponent<MeshRenderer>();
-        cubeIndexRenderer.material.SetColor("_Color", selectedColor);
+        TurnCubeSelected(dimensionName);
+        TurnCubeSelected(name);
 
         var selectedDimensionNameIndex = dimentions.FindIndex(x => x.Contains(name));
 
@@ -169,6 +172,25 @@ public class DeskFilters : MonoBehaviour
         }
     }
 
+    private string ToString(AbstractVisualisation.PropertyType type)
+    {
+        switch (type)
+        {
+            case AbstractVisualisation.PropertyType.X:
+                return "X";
+            case AbstractVisualisation.PropertyType.Y:
+                return "Y";
+            case AbstractVisualisation.PropertyType.Z:
+                return "Z";
+            case AbstractVisualisation.PropertyType.Colour:
+                return "Color";
+            case AbstractVisualisation.PropertyType.Size:
+                return "Size";
+            default:
+                return "ERROR";
+        }
+    }
+
     private void TurnAllCubesUnselectedColor()
     {
         foreach (var cube in dimentionSelectables)
@@ -176,6 +198,13 @@ public class DeskFilters : MonoBehaviour
             var cubeIndexRenderer = cube.GetComponent<MeshRenderer>();
             cubeIndexRenderer.material.SetColor("_Color", unselectedColor);
         }
+    }
+
+    private void TurnCubeSelected(string name)
+    {
+        var selectedCubeIndex = dimentionSelectables.FindIndex(i => i.GetComponent<CubeButton>().dimensionName == name);
+        var cubeIndexRenderer = dimentionSelectables[selectedCubeIndex].GetComponent<MeshRenderer>();
+        cubeIndexRenderer.material.SetColor("_Color", selectedColor);
     }
 
 }
